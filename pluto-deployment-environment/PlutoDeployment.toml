@@ -1,0 +1,5 @@
+[SliderServer]
+exclude=[
+    # don't run skeletons
+    "lectures/skeletons/intro_to_julia.jl"
+]
