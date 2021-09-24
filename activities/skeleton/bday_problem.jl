@@ -153,6 +153,11 @@ md"
 
 
 # ╔═╡ 1e740f63-d955-4edb-8d2b-5460893b7fb5
+md"
+_ambitious beavers_ (optional): I challenge you to find $p$ for $n=23$ in **one line of Julia code**. it's possible! the elegant procedure above was just to introduce you to Julia programming 😄.
+"
+
+# ╔═╡ 4a3c0b61-7925-4b48-8ad2-fc13b728460a
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1242,6 +1247,7 @@ version = "3.5.0+0"
 # ╟─13b440fe-5aa7-495d-8f6f-d870f492bf22
 # ╠═66fb8554-a1f0-42e8-89dc-e8d4a2cc6a1d
 # ╠═8cb2e013-0e0a-4bc4-a92b-db665da23af5
-# ╠═1e740f63-d955-4edb-8d2b-5460893b7fb5
+# ╟─1e740f63-d955-4edb-8d2b-5460893b7fb5
+# ╠═4a3c0b61-7925-4b48-8ad2-fc13b728460a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
