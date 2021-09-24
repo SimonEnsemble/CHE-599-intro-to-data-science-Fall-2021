@@ -18,6 +18,7 @@ see the Wikipedia page [here](https://en.wikipedia.org/wiki/Birthday_problem).
 
 _assumptions_: 
 * the students are a random selection from the population
+* ignore leap years $\implies$ assume 365 days in year
 * in the population, each birthday is equally likely
 
 !!! warning \"the goal of this activity\"
