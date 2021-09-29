@@ -325,8 +325,7 @@ CSV = comma separated value
 # ╔═╡ 4cf973b8-0361-11eb-1777-cf02396ba052
 md"
 #### joins
-combine two data frames.
-* that have one column in common, but  but one column in 
+combine the rows of two data frames on a key column.
 
 there are [seven types of joins](http://juliadata.github.io/DataFrames.jl/stable/man/joins/). let's illustrate two here.
 
@@ -335,6 +334,7 @@ goal: join information about *cities* from `df_cities` and `df_incomes`. thus th
 subtlety here: 
 * San Francisco is in `df_incomes` but missing from `df_cities`
 * Bend, Eugene, Portland are in `df_cities` but missing from `df_incomes`
+`innerjoin` and `outerjoin` are distinguished by how they handle these subtleties.
 
 ##### inner join
 only keep rows where the city (the entry in the `on` column) is in _both_ `DataFrames`s

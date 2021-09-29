@@ -282,9 +282,6 @@ e.g., group the cities (rows) in `df_cities` by state.
 # ╔═╡ c1526020-035d-11eb-2d8a-d131aa445738
 gb_state = groupby(df_cities, :state)
 
-# ╔═╡ e196029d-8f50-4f53-8298-f8e0472c3fc8
-gb_state.groups
-
 # ╔═╡ ed1a5928-be8b-4cd1-b9b8-2ed8c9e75996
 # GroupedDataFrame's work like an array
 gb_state[1]
@@ -368,16 +365,16 @@ df_incomes = CSV.read(joinpath("..", "..", "data", "incomes.csv"), DataFrame)
 # ╔═╡ 4cf973b8-0361-11eb-1777-cf02396ba052
 md"
 #### joins
-combine two data frames.
-* that have one column in common, but  but one column in 
+combine the rows of two data frames on a key column.
 
 there are [seven types of joins](http://juliadata.github.io/DataFrames.jl/stable/man/joins/). let's illustrate two here.
 
 goal: join information about *cities* from `df_cities` and `df_incomes`. thus the *key* here is `:city` since we aim to combine rows of the two `DataFrames` on the basis of the `:city` column.
 
-subtlety here: 
+subtleties here. 
 * San Francisco is in `df_incomes` but missing from `df_cities`
 * Bend, Eugene, Portland are in `df_cities` but missing from `df_incomes`
+`innerjoin` and `outerjoin` are distinguished by how they handle these subtleties.
 
 ##### inner join
 only keep rows where the city (the entry in the `on` column) is in _both_ `DataFrames`s
@@ -803,7 +800,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═ab918a54-035d-11eb-27ae-2d70b27460ac
 # ╟─9ed15498-035d-11eb-1369-53ae1eac0a27
 # ╠═c1526020-035d-11eb-2d8a-d131aa445738
-# ╠═e196029d-8f50-4f53-8298-f8e0472c3fc8
 # ╠═ed1a5928-be8b-4cd1-b9b8-2ed8c9e75996
 # ╠═e80a4a9a-0392-11eb-2d35-09bb527d7a29
 # ╟─4dd5195c-035e-11eb-1991-3fd9e7bf5d25
