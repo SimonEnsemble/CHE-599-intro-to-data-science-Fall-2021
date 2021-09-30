@@ -7,6 +7,13 @@ using InteractiveUtils
 # ╔═╡ 36bf17b8-e671-4ca4-b484-7646b5114616
 using Random, StatsBase, CairoMakie, CSV, DataFrames, ColorSchemes, PlutoUI
 
+# ╔═╡ 5a695ffb-69ea-45fc-b58e-1ae874b36939
+md"
+_my name_:
+
+_my homework partner_: 
+"
+
 # ╔═╡ 4ed68923-101f-4232-9389-b177c4894ba8
 md"
 ## Monte Carlo simulation of the lost symphony ticket problem
@@ -1347,6 +1354,7 @@ version = "3.5.0+0"
 
 # ╔═╡ Cell order:
 # ╠═36bf17b8-e671-4ca4-b484-7646b5114616
+# ╠═5a695ffb-69ea-45fc-b58e-1ae874b36939
 # ╟─4ed68923-101f-4232-9389-b177c4894ba8
 # ╟─c469f8ca-d5f8-4c21-bc9e-8e4430322f82
 # ╠═b1361c90-216d-11ec-10a6-edc31a8f3725
