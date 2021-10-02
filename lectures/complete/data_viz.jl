@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 02c26518-1e57-11ec-25a1-97bc79e4804b
-using CairoMakie, ColorSchemes, CSV, DataFrames
+using CairoMakie, ColorSchemes, CSV, DataFrames, Printf, RDatasets
 
 # ╔═╡ 4baf009a-a01d-4b50-baad-508fee233846
 md"# data visualization
@@ -159,6 +159,121 @@ begin
 	current_figure()
 end
 
+# ╔═╡ b6c9396a-a9e5-40f3-8bce-e573206ca3f8
+md"### bar plot
+
+see the docs for `barplot` [here](https://makie.juliaplots.org/stable/examples/plotting_functions/barplot/index.html).
+
+*goal*: visualize how Americans like their steak done [[source](https://fivethirtyeight.com/features/how-americans-like-their-steak/)] via a bar plot showing preference for rare, medium rare, etc.
+
+🐸 read the tabular data from the file `steak.csv` [here](https://github.com/SimonEnsemble/CHE-599-intro-to-data-science-Fall-2021/blob/master/data/steak.csv) as a `DataFrame`.
+* rows: each row represents a survey response of a person
+* first column: answer to \"do you eat steak?\"
+* second column: answer to \"if you do like steak, how do you like your steak done?\"
+"
+
+# ╔═╡ d73eb64c-663d-4f5b-8fda-a39543dda27b
+# our present working directory
+pwd()
+
+# ╔═╡ 16a582d1-8ebb-4fdf-82e8-cff27c5afdcc
+# list files in your current directory (might be useful)
+readdir()
+
+# ╔═╡ 55646c9b-cd88-4ad5-b15c-e95f17f5cf86
+# define path to file.
+wheres_my_file = abspath(joinpath("..", "..", "data", "steak.csv"))
+
+# ╔═╡ 1036214d-bf54-417f-99c7-36a501ff505f
+# check that we have the right path.
+isfile(wheres_my_file)
+
+# ╔═╡ 6b15f4f9-577c-406c-ad54-b9361b56968f
+df_steak = CSV.File(wheres_my_file, header=[:eats_steak, :how_cooked]) |> DataFrame
+
+# ╔═╡ f2406b5f-a810-4962-9b5f-6efe8f97a79c
+md"🐸 drop rows corresponding to folks that do not eat steak.
+"
+
+# ╔═╡ 59694b4d-dcb5-409e-8e0d-9e1bbc90dab6
+dropmissing!(df_steak)
+
+# ╔═╡ 2a2c3377-6c23-44f5-8c19-1976408cdfd3
+unique(df_steak[:, :eats_steak])
+
+# ╔═╡ 009a4a15-9704-405b-9aa3-c2d5a5f995a8
+md"
+🐸 count the number of folks who prefer steak rare, medium rare, etc.
+
+store the result in `df_steak_prefs::DataFrame` to use for visualization.
+
+!!! hint
+    use `combine`
+"
+
+# ╔═╡ 13f8bce2-728c-4128-af6a-24e2967241e0
+nrow(df_steak)
+
+# ╔═╡ 17d2a769-6366-422f-aae1-54c6ffbd9dc9
+begin
+	df_steak_prefs = combine(groupby(df_steak, :how_cooked), nrow => :nb_folks)
+	df_steak_prefs = df_steak_prefs[[2, 1, 3, 4, 5], :]
+end
+
+# ╔═╡ 04ca01f8-31b7-4aa7-8870-705284f961b7
+md"
+🐸 draw a bar plot showing how folks like their steak cooked.
+"
+
+# ╔═╡ 45d8f016-d20d-4a38-b189-e9ab7b80a256
+[(i-1) / (nrow(df_steak_prefs)-1) for i = 1:nrow(df_steak_prefs)]
+
+# ╔═╡ 6f6cced6-6ead-43d2-bfe7-8374641c8fc0
+steak_colors = reverse(get(ColorSchemes.hot, [(i-1) / (nrow(df_steak_prefs)-1) for i = 1:nrow(df_steak_prefs)]))
+
+# ╔═╡ 6dfdd6f9-ed6a-425b-8253-71c06b183d25
+begin
+	fig3 = Figure()
+	ax3 = Axis(fig3[1, 1], 
+		title="how do you like your steak done?", 
+		xlabel="# responses",
+	    yticks=(1:nrow(df_steak_prefs), df_steak_prefs[:, :how_cooked])
+	)
+	barplot!(1:nrow(df_steak_prefs), df_steak_prefs[:, :nb_folks], 
+		     direction=:x, color=steak_colors,
+			 bar_labels=:y, 
+		     label_formatter=n -> @sprintf("%d", 
+			                               n / sum(df_steak_prefs[:, :nb_folks]) * 100
+			                              ) * "%",
+	         strokecolor=:black, strokewidth = 1
+	)
+	xlims!(-2, 183)
+	current_figure()
+end
+
+# ╔═╡ 4f81d47c-32c0-4b0f-8ecc-e143a164aadb
+md"## histograms
+
+see the `hist` function [docs](https://makie.juliaplots.org/stable/examples/plotting_functions/hist/).
+
+🐸 plot the distribution of heights of a sample of boys in Oxford from the `Oxboys` data set from `RDatasets.jl`. [source](https://github.com/JuliaStats/RDatasets.jl).
+
+"
+
+# ╔═╡ cf04103f-cc40-4f23-be12-c34aa3525b1f
+df_oxford_boys = dataset("mlmRev", "Oxboys") # from R data sets
+
+# ╔═╡ 14f634cc-46d4-4cf1-83bd-1a6719a34d7c
+begin
+	fig4 = Figure()
+	ax4 = Axis(fig4[1, 1], 
+		title="height of boys in Oxford", 
+		xlabel="height [cm]",
+	    ylabel="# boys"	)
+	hist!(df_oxford_boys[:, :Height], color="limegreen")
+	current_figure()
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -166,12 +281,15 @@ CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 
 [compat]
-CSV = "~0.9.4"
+CSV = "~0.8.5"
 CairoMakie = "~0.6.5"
 ColorSchemes = "~3.15.0"
 DataFrames = "~1.2.2"
+RDatasets = "~0.7.5"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -240,10 +358,10 @@ uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
 version = "0.4.1"
 
 [[CSV]]
-deps = ["CodecZlib", "Dates", "FilePathsBase", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings"]
-git-tree-sha1 = "3a877c2fc5c9b88ed7259fd0bdb7691aad6b50dc"
+deps = ["Dates", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode"]
+git-tree-sha1 = "b83aa3f513be680454437a0eee21001607e5d983"
 uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.9.4"
+version = "0.8.5"
 
 [[Cairo]]
 deps = ["Cairo_jll", "Colors", "Glib_jll", "Graphics", "Libdl", "Pango_jll"]
@@ -263,11 +381,17 @@ git-tree-sha1 = "f2202b55d816427cd385a9a4f3ffb226bee80f99"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+0"
 
+[[CategoricalArrays]]
+deps = ["DataAPI", "Future", "Missings", "Printf", "Requires", "Statistics", "Unicode"]
+git-tree-sha1 = "fbc5c413a005abdeeb50ad0e54d85d000a1ca667"
+uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
+version = "0.10.1"
+
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "bd4afa1fdeec0c8b89dad3c6e92bc6e3b0fec9ce"
+git-tree-sha1 = "1417269aa4238b85967827f11f3e0ce5722b7bf0"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.6.0"
+version = "1.7.1"
 
 [[CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -362,9 +486,9 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[Distributions]]
 deps = ["ChainRulesCore", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns"]
-git-tree-sha1 = "f4efaa4b5157e0cdb8283ae0b5428bc9208436ed"
+git-tree-sha1 = "a9b99024b57d12fb19892d3f2230856f6d9671a4"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.16"
+version = "0.25.17"
 
 [[DocStringExtensions]]
 deps = ["LibGit2"]
@@ -393,6 +517,11 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "b3bfd02e98aedfa5cf885665493c5598c350cd2f"
 uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
 version = "2.2.10+0"
+
+[[ExprTools]]
+git-tree-sha1 = "b7e3d17636b348f005f11040025ae8c6f645fe92"
+uuid = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
+version = "0.1.6"
 
 [[FFMPEG]]
 deps = ["FFMPEG_jll"]
@@ -423,12 +552,6 @@ deps = ["Pkg", "Requires", "UUIDs"]
 git-tree-sha1 = "3c041d2ac0a52a12a27af2782b34900d9c3ee68c"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 version = "1.11.1"
-
-[[FilePathsBase]]
-deps = ["Dates", "Mmap", "Printf", "Test", "UUIDs"]
-git-tree-sha1 = "6d4b609786127030d09e6b1ee0e2044ec20eb403"
-uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
-version = "0.9.11"
 
 [[FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
@@ -502,9 +625,9 @@ version = "2.68.3+0"
 
 [[Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
-git-tree-sha1 = "2c1cf4df419938ece72de17f368a021ee162762e"
+git-tree-sha1 = "1c5a84319923bea76fa145d49e93aa4394c73fc2"
 uuid = "a2bd30eb-e257-5431-a919-1863eab51364"
-version = "1.1.0"
+version = "1.1.1"
 
 [[Graphite2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -768,6 +891,12 @@ version = "1.0.2"
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
+[[Mocking]]
+deps = ["ExprTools"]
+git-tree-sha1 = "748f6e1e4de814b101911e64cc12d83a6af66782"
+uuid = "78c3b35d-d492-501b-9361-3d52fe80e533"
+version = "0.7.2"
+
 [[MosaicViews]]
 deps = ["MappedArrays", "OffsetArrays", "PaddedViews", "StackViews"]
 git-tree-sha1 = "b34e3bc3ca7c94914418637cb10cc4d1d80d877d"
@@ -885,9 +1014,9 @@ version = "1.47.0+0"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "9d8c00ef7a8d110787ff6f170579846f776133a9"
+git-tree-sha1 = "bfd7d8c7fd87f04543810d9cbd3995972236ba1b"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.0.4"
+version = "1.1.2"
 
 [[Pixman_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -930,9 +1059,9 @@ version = "1.2.2"
 
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
-git-tree-sha1 = "0d1245a357cc61c8cd61934c07447aa569ff22e6"
+git-tree-sha1 = "6330e0c350997f80ed18a9d8d9cb7c7ca4b3a880"
 uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "1.1.0"
+version = "1.2.0"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -950,6 +1079,18 @@ git-tree-sha1 = "78aadffb3efd2155af139781b8a8df1ef279ea39"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 version = "2.4.2"
 
+[[RData]]
+deps = ["CategoricalArrays", "CodecZlib", "DataFrames", "Dates", "FileIO", "Requires", "TimeZones", "Unicode"]
+git-tree-sha1 = "19e47a495dfb7240eb44dc6971d660f7e4244a72"
+uuid = "df47a6cb-8c03-5eed-afd8-b6050d6c41da"
+version = "0.8.3"
+
+[[RDatasets]]
+deps = ["CSV", "CodecZlib", "DataFrames", "FileIO", "Printf", "RData", "Reexport"]
+git-tree-sha1 = "06d4da8e540edb0314e88235b2e8f0429404fdb7"
+uuid = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
+version = "0.7.5"
+
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -964,6 +1105,11 @@ git-tree-sha1 = "01d341f502250e81f6fec0afe662aa861392a3aa"
 uuid = "c84ed2f1-dad5-54f0-aa8e-dbefe2724439"
 version = "0.4.2"
 
+[[RecipesBase]]
+git-tree-sha1 = "44a75aa7a527910ee3d1751d1f0e4148698add9e"
+uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+version = "1.1.2"
+
 [[Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
@@ -971,9 +1117,9 @@ version = "1.2.2"
 
 [[RelocatableFolders]]
 deps = ["SHA", "Scratch"]
-git-tree-sha1 = "0529f4188bc8efee85a7e580aca1c7dff6b103f8"
+git-tree-sha1 = "9a4b7698b59b24003e8475df70c1b83b958b1f62"
 uuid = "05181044-ff0b-4ac5-8273-598c1e38db00"
-version = "0.1.0"
+version = "0.1.1"
 
 [[Requires]]
 deps = ["UUIDs"]
@@ -1052,10 +1198,10 @@ deps = ["LinearAlgebra", "Random"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[SpecialFunctions]]
-deps = ["ChainRulesCore", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
-git-tree-sha1 = "ad42c30a6204c74d264692e633133dcea0e8b14e"
+deps = ["ChainRulesCore", "IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
+git-tree-sha1 = "793793f1df98e3d7d554b65a107e9c9a6399a6ed"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
-version = "1.6.2"
+version = "1.7.0"
 
 [[StackViews]]
 deps = ["OffsetArrays"]
@@ -1071,9 +1217,9 @@ version = "0.3.3"
 
 [[StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
-git-tree-sha1 = "3240808c6d463ac46f1c1cd7638375cd22abbccb"
+git-tree-sha1 = "3c76dde64d03699e074ac02eb2e8ba8254d428da"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.2.12"
+version = "1.2.13"
 
 [[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -1092,9 +1238,9 @@ version = "0.33.10"
 
 [[StatsFuns]]
 deps = ["ChainRulesCore", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
-git-tree-sha1 = "46d7ccc7104860c38b11966dd1f72ff042f382e4"
+git-tree-sha1 = "95072ef1a22b057b1e80f73c2a89ad238ae4cfff"
 uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
-version = "0.9.10"
+version = "0.9.12"
 
 [[StructArrays]]
 deps = ["Adapt", "DataAPI", "StaticArrays", "Tables"]
@@ -1138,9 +1284,15 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[TiffImages]]
 deps = ["ColorTypes", "DocStringExtensions", "FileIO", "FixedPointNumbers", "IndirectArrays", "Inflate", "OffsetArrays", "OrderedCollections", "PkgVersion", "ProgressMeter"]
-git-tree-sha1 = "632a8d4dbbad6627a4d2d21b1c6ebcaeebb1e1ed"
+git-tree-sha1 = "945b8d87c5e8d5e34e6207ee15edb9d11ae44716"
 uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
-version = "0.4.2"
+version = "0.4.3"
+
+[[TimeZones]]
+deps = ["Dates", "Future", "LazyArtifacts", "Mocking", "Pkg", "Printf", "RecipesBase", "Serialization", "Unicode"]
+git-tree-sha1 = "6c9040665b2da00d30143261aea22c7427aada1c"
+uuid = "f269a46b-ccf7-5d73-abea-4c690281aa53"
+version = "1.5.7"
 
 [[TranscodingStreams]]
 deps = ["Random", "Test"]
@@ -1160,12 +1312,6 @@ deps = ["REPL"]
 git-tree-sha1 = "53915e50200959667e78a92a418594b428dffddf"
 uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
-
-[[WeakRefStrings]]
-deps = ["DataAPI", "Parsers"]
-git-tree-sha1 = "4a4cfb1ae5f26202db4f0320ac9344b3372136b0"
-uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
-version = "1.3.0"
 
 [[WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -1317,5 +1463,24 @@ version = "3.5.0+0"
 # ╠═d8f93cf5-064e-493e-ad10-5457c8c861a4
 # ╠═a9e4ceb9-2d44-42bc-a891-d19134cd736a
 # ╠═a0a8a005-b9f8-461a-a160-dbe1c1304708
+# ╟─b6c9396a-a9e5-40f3-8bce-e573206ca3f8
+# ╠═d73eb64c-663d-4f5b-8fda-a39543dda27b
+# ╠═16a582d1-8ebb-4fdf-82e8-cff27c5afdcc
+# ╠═55646c9b-cd88-4ad5-b15c-e95f17f5cf86
+# ╠═1036214d-bf54-417f-99c7-36a501ff505f
+# ╠═6b15f4f9-577c-406c-ad54-b9361b56968f
+# ╟─f2406b5f-a810-4962-9b5f-6efe8f97a79c
+# ╠═59694b4d-dcb5-409e-8e0d-9e1bbc90dab6
+# ╠═2a2c3377-6c23-44f5-8c19-1976408cdfd3
+# ╟─009a4a15-9704-405b-9aa3-c2d5a5f995a8
+# ╠═13f8bce2-728c-4128-af6a-24e2967241e0
+# ╠═17d2a769-6366-422f-aae1-54c6ffbd9dc9
+# ╟─04ca01f8-31b7-4aa7-8870-705284f961b7
+# ╠═45d8f016-d20d-4a38-b189-e9ab7b80a256
+# ╠═6f6cced6-6ead-43d2-bfe7-8374641c8fc0
+# ╠═6dfdd6f9-ed6a-425b-8253-71c06b183d25
+# ╟─4f81d47c-32c0-4b0f-8ecc-e143a164aadb
+# ╠═cf04103f-cc40-4f23-be12-c34aa3525b1f
+# ╠═14f634cc-46d4-4cf1-83bd-1a6719a34d7c
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
