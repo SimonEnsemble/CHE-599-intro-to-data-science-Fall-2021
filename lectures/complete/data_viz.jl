@@ -288,19 +288,19 @@ e.g. let's visualize the distribution of petal lengths among different species o
 # ╔═╡ 0a1cdfaf-f869-47b7-b7d1-cfd7727a9b32
 df_iris = dataset("datasets", "iris")
 
-# ╔═╡ 96b046fb-e000-43d8-b61e-103ed03cc51d
+# ╔═╡ 0d0f2a34-a308-47fb-bae1-7a13b57997f0
 unique(df_iris[:, :Species])
 
-# ╔═╡ 4ae0137d-94aa-4bf3-a024-c896f77eb923
+# ╔═╡ efeab4e8-97ad-415f-9565-d6c131952528
 begin
 	fig5 = Figure()
 	ax5 = Axis(fig5[1, 1], 
-		title="irises", 
-	    ylabel="petal length",
-		xticks=(1:3, unique(df_iris[:, :Species]))
+		title="irises",
+		ylabel="petal length",
+		xticks=(1:3, [df_iris_species[1, :Species] for df_iris_species in groupby(df_iris, :Species)])
 	)
-	for (i, df_by_species) in enumerate(groupby(df_iris, :Species))
-		boxplot!(i * ones(nrow(df_by_species)), df_by_species[:, :PetalLength])
+	for (i, df_iris_species) in enumerate(groupby(df_iris, :Species))
+		boxplot!(i * ones(nrow(df_iris_species)), df_iris_species[:, :PetalLength])
 	end
 	current_figure()
 end
@@ -1515,7 +1515,7 @@ version = "3.5.0+0"
 # ╠═14f634cc-46d4-4cf1-83bd-1a6719a34d7c
 # ╟─de732f20-ff77-4f10-a196-50a1d0de640d
 # ╠═0a1cdfaf-f869-47b7-b7d1-cfd7727a9b32
-# ╠═96b046fb-e000-43d8-b61e-103ed03cc51d
-# ╠═4ae0137d-94aa-4bf3-a024-c896f77eb923
+# ╠═0d0f2a34-a308-47fb-bae1-7a13b57997f0
+# ╠═efeab4e8-97ad-415f-9565-d6c131952528
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
