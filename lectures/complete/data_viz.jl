@@ -274,6 +274,37 @@ begin
 	current_figure()
 end
 
+# ╔═╡ de732f20-ff77-4f10-a196-50a1d0de640d
+md"
+## boxplots
+
+see the `boxplot` function [docs](https://makie.juliaplots.org/stable/examples/plotting_functions/boxplot/).
+
+the Wikipedia page [here](https://en.wikipedia.org/wiki/Interquartile_range) explains box plots. I found the figure [here](https://en.wikipedia.org/wiki/Interquartile_range#/media/File:Boxplot_vs_PDF.svg) helpful.
+
+e.g. let's visualize the distribution of petal lengths among different species of irises.
+"
+
+# ╔═╡ 0a1cdfaf-f869-47b7-b7d1-cfd7727a9b32
+df_iris = dataset("datasets", "iris")
+
+# ╔═╡ 96b046fb-e000-43d8-b61e-103ed03cc51d
+unique(df_iris[:, :Species])
+
+# ╔═╡ 4ae0137d-94aa-4bf3-a024-c896f77eb923
+begin
+	fig5 = Figure()
+	ax5 = Axis(fig5[1, 1], 
+		title="irises", 
+	    ylabel="petal length",
+		xticks=(1:3, unique(df_iris[:, :Species]))
+	)
+	for (i, df_by_species) in enumerate(groupby(df_iris, :Species))
+		boxplot!(i * ones(nrow(df_by_species)), df_by_species[:, :PetalLength])
+	end
+	current_figure()
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1482,5 +1513,9 @@ version = "3.5.0+0"
 # ╟─4f81d47c-32c0-4b0f-8ecc-e143a164aadb
 # ╠═cf04103f-cc40-4f23-be12-c34aa3525b1f
 # ╠═14f634cc-46d4-4cf1-83bd-1a6719a34d7c
+# ╟─de732f20-ff77-4f10-a196-50a1d0de640d
+# ╠═0a1cdfaf-f869-47b7-b7d1-cfd7727a9b32
+# ╠═96b046fb-e000-43d8-b61e-103ed03cc51d
+# ╠═4ae0137d-94aa-4bf3-a024-c896f77eb923
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
