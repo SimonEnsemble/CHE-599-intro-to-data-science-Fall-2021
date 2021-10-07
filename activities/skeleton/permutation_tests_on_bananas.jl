@@ -60,12 +60,12 @@ then, we expose each plant in the experiment to the fungus that causes Panama di
 
 after one year, we record whether or not each banana plant has been infected with Panama disease. the study is \"blind\" because the caretakers of the plants were never told which plants are genetically modified and which are not. this minimizes the chances that the caretakers (advertently or inadvertently) treat the two different variants of plants differently and thereby bias the outcome of the experiment.
 
-⬛ the results of our randomized experiment are in `banana_AB_test_results.csv`. 
+⬛ the results of our randomized experiment are in `banana_AB_test_results.csv` [here](https://raw.githubusercontent.com/SimonEnsemble/CHE-599-intro-to-data-science-Fall-2021/master/data/banana_AB_test_results.csv). 
 * each row represents a banana plant. 
 * the `:modified` attribute is `true` if gene X in the banana plant was modified and `false` otherwise. 
 * the `:infected` attribute indicates the outcome of the experiment; this attribute is `true` if the banana plant was ultimately infected and `false` otherwise. 
 
-🍌 read in `banana_study.csv` as a `DataFrame`, `df`.
+🍌 read in `banana_AB_test_results.csv` as a `DataFrame`, `df`.
 "
 
 # ╔═╡ 7c557912-0e39-11eb-1fb9-a70ddb2de7b4
