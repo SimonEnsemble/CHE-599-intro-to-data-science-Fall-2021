@@ -16,7 +16,7 @@ md"
 
 background reading:
 * [A/B tests](https://www.inferentialthinking.com/chapters/12/1/AB_Testing.html)
-* [causality](https://www.inferentialthinking.com/chapters/12/3/Causality.html)
+* [causality](https://inferentialthinking.com/chapters/02/causality-and-experiments.html)
 
 learning objectives:
 * formulate competing hypotheses
