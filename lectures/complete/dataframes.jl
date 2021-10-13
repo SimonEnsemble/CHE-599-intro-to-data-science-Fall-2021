@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.16.0
 
 using Markdown
 using InteractiveUtils
@@ -82,7 +82,7 @@ annual rainfall [inches]:
 # ╔═╡ a5e9fc00-0353-11eb-1443-63b1c2edab7c
 begin
 	# (1) treat it like an array, except columns are called by Symbol's, not Int's
-	df_cities[!, :rain] = [51.0, 43.0, 47.0, 12.0, 25.0]
+	df_cities[:, :rain] = [51.0, 43.0, 47.0, 12.0, 25.0]
 	
 	# (2) allows you to insert a column at specified location
 	insertcols!(df_cities, 2, :state => ["OR", "OR", "OR", "OR", "CA"])
@@ -131,17 +131,23 @@ unique!(df_cities)
 # ╔═╡ 63716d2a-0362-11eb-3ce5-3b41d4bef04c
 md"
 #### deleting a column
+
+see the `select!` function in [the docs](https://dataframes.juliadata.org/stable/lib/functions/#DataFrames.select!).
+
+I also use `transform!` to transform a column of the dataframe and to create a new column, giving twice the rainfall. see [the docs](https://dataframes.juliadata.org/stable/lib/functions/#DataFrames.transform!).
 "
 
 # ╔═╡ 6d39deee-0362-11eb-3dbb-0f34eff54591
 begin
-	# add a bogus column
-	df_cities[:, :bogus_col] = [4, 3, 2, 3, 3]
+	# add a column we'll want to remove later
+	#  this illustrates way (3) to append a new column
+	transform!(df_cities, :rainfall => (col -> 2 * col) => :twice_the_rainfall)
+		
 	df_cities
 end
 
 # ╔═╡ 5931d59e-0391-11eb-078b-ddb0bcaf6521
-select!(df_cities, Not(:bogus_col))
+select!(df_cities, Not(:twice_the_rainfall))
 
 # ╔═╡ dc44eda2-ad55-4d3f-a0fc-3d6fec5cdc58
 df_cities
