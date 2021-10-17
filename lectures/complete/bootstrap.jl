@@ -184,7 +184,7 @@ end
 
 # ╔═╡ 533f3142-14e6-11eb-0946-7dca11462e78
 md"
-🐸 redraw the bootstrap empirical distribution of the sample mean but this time include a visualization of the interval.
+🌻 redraw the bootstrap empirical distribution of the sample mean but this time include a visualization of the interval.
 "
 
 # ╔═╡ 7ef2c324-14e6-11eb-23ee-3569ff389cb1
@@ -1376,7 +1376,7 @@ version = "3.5.0+0"
 # ╠═483ab8ba-14e5-11eb-28dc-a5f1c3f7f21b
 # ╟─ca01c91a-14e5-11eb-2e02-3bee646d2414
 # ╠═36d8f176-14e6-11eb-13fa-370a09e4f864
-# ╠═533f3142-14e6-11eb-0946-7dca11462e78
+# ╟─533f3142-14e6-11eb-0946-7dca11462e78
 # ╠═7ef2c324-14e6-11eb-23ee-3569ff389cb1
 # ╟─375b15d6-14e6-11eb-18da-2bedd9945456
 # ╟─00000000-0000-0000-0000-000000000001
