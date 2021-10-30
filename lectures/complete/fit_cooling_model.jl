@@ -110,7 +110,7 @@ the data is $\{(t_i, T_i)\}_{i=1}^N$, where data point $(t_i, T_i)$ represents $
 "
 
 # ╔═╡ aa5af36a-843a-4f6d-98e6-d4b5cc4d4e61
-data = CSV.read(joinpath("..", "..", "ambient_heat_transfer.csv"), DataFrame)
+data = CSV.read(joinpath("..", "..", "data", "ambient_heat_transfer.csv"), DataFrame)
 
 # ╔═╡ 4e3a2167-6078-4744-a3f1-4f1c665c3540
 begin
